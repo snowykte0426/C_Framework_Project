@@ -18,6 +18,8 @@
     <ClCompile Include="maste_code.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
+<<<<<<< HEAD
+=======
     <ClCompile Include="socket.c">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -31,5 +33,6 @@
     <None Include="..\..\..\C_Project\index.html">
       <Filter>소스 파일</Filter>
     </None>
+>>>>>>> 2f13fa42db2a2b05f2c361878069b8414118d615
   </ItemGroup>
 </Project>

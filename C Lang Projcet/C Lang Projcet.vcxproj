@@ -131,6 +131,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="maste_code.c" />
+<<<<<<< HEAD
+=======
     <ClCompile Include="socket.c" />
   </ItemGroup>
   <ItemGroup>
@@ -138,6 +140,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\C_Project\index.html" />
+>>>>>>> 2f13fa42db2a2b05f2c361878069b8414118d615
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -174,48 +174,10 @@ int master_code() {
     return 0;
 }
 
-
-void function1() {
-    master_code();
-}
-
-void function2() {
-    server();
-}
-
 int main() {
-    STARTUPINFO si1, si2;
-    PROCESS_INFORMATION pi1, pi2;
-
-    ZeroMemory(&si1, sizeof(si1));
-    si1.cb = sizeof(si1);
-    ZeroMemory(&pi1, sizeof(pi1));
-
-    ZeroMemory(&si2, sizeof(si2));
-    si2.cb = sizeof(si2);
-    ZeroMemory(&pi2, sizeof(pi2));
-
-    // Create process for function 1
-    if (!CreateProcess(NULL, "function1.exe", NULL, NULL, FALSE, 0, NULL, NULL, &si1, &pi1)) {
-        fprintf(stderr, "CreateProcess failed (%d).\n", GetLastError());
-        return 1;
-    }
-
-    // Create process for function 2
-    if (!CreateProcess(NULL, "function2.exe", NULL, NULL, FALSE, 0, NULL, NULL, &si2, &pi2)) {
-        fprintf(stderr, "CreateProcess failed (%d).\n", GetLastError());
-        return 1;
-    }
-
-    // Wait for both processes to finish
-    WaitForSingleObject(pi1.hProcess, INFINITE);
-    WaitForSingleObject(pi2.hProcess, INFINITE);
-
-    // Close process handles
-    CloseHandle(pi1.hProcess);
-    CloseHandle(pi1.hThread);
-    CloseHandle(pi2.hProcess);
-    CloseHandle(pi2.hThread);
-
+    system("Y:");
+    system("Y:\Coding Studing\C_Lang_Project_Back_Server\x64\Release");
+    system("start C_Lang_Project_Back_Server.exe");
+    printf("This is the original process.\n");
     return 0;
 }
