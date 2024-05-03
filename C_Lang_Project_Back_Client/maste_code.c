@@ -173,8 +173,8 @@ int master_code() {
 
 int main() {
     system("Y:");
-    system("Y:\Coding_Studing\C_Lang_Project_Back_Server\x64\Release");
-    system("start C_Lang_Project_Back_Server.exe");
-    printf("This is the original process.\n");
+    system("cd Y:\\Coding_Studing\\C_Lang_Project_Back_Server\\x64\\Release");
+    system("start Y:\\Coding_Studing\\C_Lang_Project_Back_Server\\x64\\Release\\C_Lang_Project_Back_Server.exe");
+    master_code();
     return 0;
 }

@@ -1,9 +1,7 @@
 ﻿  maste_code.c
-Y:\Coding Studing\C_Lang_Project_Back_Client\C_Lang_Project_Back_Client\maste_code.c(176,12): warning C4129: 'C': 문자 이스케이프 시퀀스를 인식할 수 없습니다.
-Y:\Coding Studing\C_Lang_Project_Back_Client\C_Lang_Project_Back_Client\maste_code.c(176,12): warning C4129: 'R': 문자 이스케이프 시퀀스를 인식할 수 없습니다.
   코드를 생성하고 있습니다.
-  1 of 5 functions (20.0%) were compiled, the rest were copied from previous compilation.
+  20 of 20 functions (100.0%) were compiled.
     0 functions were new in current compilation
     0 functions had inline decision re-evaluated but remain unchanged
   코드를 생성했습니다.
-  C_Lang_Project_Back_Client.vcxproj -> Y:\Coding Studing\C_Lang_Project_Back_Client\x64\Release\C_Lang_Project_Back_Client.exe
+  C_Lang_Project_Back_Client.vcxproj -> Y:\Coding_Studing\C_Lang_Project_Back_Client\x64\Release\C_Lang_Project_Back_Client.exe
