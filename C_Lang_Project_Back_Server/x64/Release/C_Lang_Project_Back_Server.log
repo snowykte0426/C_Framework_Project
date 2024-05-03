@@ -1,8 +1,6 @@
-﻿  main.c
-Y:\Coding Studing\C_Lang_Project_Back_Server\C_Lang_Project_Back_Server\main.c(53,7): warning C4101: 'check' :참조되지 않은 지역 변수입니다.
-  코드를 생성하고 있습니다.
-  4 of 4 functions (100.0%) were compiled.
+﻿  코드를 생성하고 있습니다.
+  1 of 14 functions ( 7.1%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    0 functions had inline decision re-evaluated but remain unchanged
+    1 functions had inline decision re-evaluated but remain unchanged
   코드를 생성했습니다.
-  C_Lang_Project_Back_Server.vcxproj -> Y:\Coding Studing\C_Lang_Project_Back_Server\x64\Release\C_Lang_Project_Back_Server.exe
+  C_Lang_Project_Back_Server.vcxproj -> Y:\Coding_Studing\C_Lang_Project_Back_Server\x64\Release\C_Lang_Project_Back_Server.exe

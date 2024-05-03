@@ -2,10 +2,14 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>Y:\Coding Studing\C_Lang_Project_Back_Server\x64\Release\C_Lang_Project_Back_Server.exe</FullPath>
+      <FullPath>Y:\Coding_Studing\C_Lang_Project_Back_Server\x64\Release\C_Lang_Project_Back_Server.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
-  <ContentFiles />
+  <ContentFiles>
+    <ContentFile>
+      <FullPath>Y:\Coding_Studing\C_Lang_Project_Back_Server\C_Lang_Project_Back_Server\index.htm</FullPath>
+    </ContentFile>
+  </ContentFiles>
   <SatelliteDlls />
   <NonRecipeFileRefs />
 </Project>

@@ -16,7 +16,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.c">
-      <Filter>리소스 파일</Filter>
+      <Filter>소스 파일</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="index.htm">
+      <Filter>리소스 파일</Filter>
+    </None>
   </ItemGroup>
 </Project>
