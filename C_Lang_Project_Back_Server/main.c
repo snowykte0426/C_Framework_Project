@@ -1,11 +1,17 @@
 ﻿#define _WINSOCK_DEPRECATED_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
-#include <winsock2.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <windows.h>
-#include <time.h>
+
+#include "winsock2.h"
+#include "stdio.h"
+#include "stdlib.h"
+#include "windows.h"
+#include "time.h"
+#include "string.h"
+#include "ctype.h"
+#include "mysql.h"
 #pragma comment(lib, "ws2_32")
+#pragma comment(lib, "libmariadb.lib")
+
 void WelcomeMessage() {
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
     printf(" _____   _                            _   _         _         \n"
@@ -22,7 +28,11 @@ void WelcomeMessage() {
         "______| |______ |      \\_   \\/   |______ |     \\_      |_____ |_____| |  \\_| ______| |_____| |_____ |______\n\n\n\n");
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
 }
-#define BUFSIZE 512
+
+void ProcessPostRequest(char buf[]);
+void ProcessGetRequest(SOCKET client_sock, char buf[]);
+char* filebuffer = 1;
+#define BUFSIZE 1024
 #define HTMFILE "index.htm"
 SOCKET listen_sock;
 DWORD WINAPI ListenThread(LPVOID arg) {
@@ -33,6 +43,7 @@ DWORD WINAPI ListenThread(LPVOID arg) {
     char buf[BUFSIZE + 1];
     int retval;
     while (1) {
+        buf[1024] = NULL;
         addrlen = sizeof(clientaddr);
         client_sock = accept(listen_sock, (SOCKADDR*)&clientaddr, &addrlen);
         if (client_sock == INVALID_SOCKET) {
@@ -46,46 +57,100 @@ DWORD WINAPI ListenThread(LPVOID arg) {
             closesocket(client_sock);
             continue;
         }
+        buf[retval] = NULL;
         struct tm* user_time;
         timer = time(NULL);
         user_time = localtime(&timer);
-        buf[retval] = '\0';
-        printf("<%d:%d:%d>[TCP/%s:%d]\n%s\n",user_time->tm_hour,user_time->tm_min,user_time->tm_sec, inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port), buf);
-        if (strstr(buf, "GET / ") || strstr(buf, "GET /index.htm ")) {
-            FILE* file = fopen(HTMFILE, "r");
-            if (file) {
-                fseek(file, 0, SEEK_END);
-                long filesize = ftell(file);
-                fseek(file, 0, SEEK_SET);
-                char* filebuffer = (char*)malloc(filesize + 1);
-                fread(filebuffer, filesize, 1, file);
-                filebuffer[filesize] = '\0';
-                char header[1024];
-                sprintf(header, "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: %ld\r\nConnection: close\r\n\r\n", filesize);
-                send(client_sock, header, strlen(header), 0);
-                send(client_sock, filebuffer, filesize, 0);
-                free(filebuffer);
-                fclose(file);
-            }
-            else {
-                char response[] = "HTTP/1.1 404 Not Found\r\nContent-Type: text/html\r\nConnection: close\r\n\r\n<html><body><h1>404 Not Found</h1></body></html>";
-                send(client_sock, response, strlen(response), 0);
-            }
+        printf("<%d:%d:%d>[TCP/%s:%d]\n%s\n", user_time->tm_hour, user_time->tm_min, user_time->tm_sec, inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port), buf);
+        if (strstr(buf, "GET / ") || strstr(buf, "GET /index.htm ") || strcmp(buf, "GET / ")) {
+            ProcessGetRequest(client_sock, buf);
+        }
+        else if (strstr(buf, "POST / ") || strcmp(buf, "POST / ")) {
+           ProcessPostRequest(buf);
         }
         else {
             char response[] = "HTTP/1.1 400 Bad Request\r\nContent-Type: text/html\r\nConnection: close\r\n\r\n<html><body><h1>400 Bad Request</h1></body></html>";
             send(client_sock, response, strlen(response), 0);
         }
-        closesocket(client_sock);
     }
+    closesocket(client_sock);
     return 0;
 }
+
+void ProcessPostRequest(char buf[]) {
+    MYSQL mysql;
+    MYSQL_RES* res;
+    MYSQL_ROW row;
+    mysql_init(&mysql);
+    short DB_check = mysql_real_connect(&mysql, "localhost", "root", "123456", "board", 0, NULL, 0);
+    printf("MySQL Client Version: %s\n", mysql_get_client_info());
+    if (!DB_check) {
+        fprintf(stderr, "DB connect fall...\n[DB Error]\n%s\n", mysql_error(&mysql));
+        return;
+    }
+    char* data1 = strstr(buf, "\r\n\r\n") + 4;
+    char* data2 = strstr(data1, "& ㅡㅜㅠvgcfxcontect=");
+    data2 += strlen("&contect=");
+    char* value1 = data1 + strlen("title=");
+    char* value2 = data2;
+    int data_check1 = 0, data_check2 = 0;
+    if (*value1) {
+        data_check1++;
+    }
+    if (*value2) {
+        data_check2++;
+    }
+    if (data_check1 > 0 && data_check2 > 0) {
+        char query[255];
+        sprintf(query, "INSERT INTO board.c_project(title, contect) VALUES('%s', '%s')", value1, value2);
+
+        if (mysql_query(&mysql, query)) {
+            fprintf(stderr, "쿼리 실행 실패: %s\n--------------------------------------\n", mysql_error(&mysql));
+            return;
+        }
+        if (res = mysql_store_result(&mysql)) {
+            while (row = mysql_fetch_row(res)) {
+                printf("%s %s\n", row[0], row[1]);
+            }
+            mysql_free_result(res);
+        }
+    }
+
+    mysql_close(&mysql);
+}
+
+
+void ProcessGetRequest(SOCKET client_sock, char buf[]) {
+    FILE* file;
+    long long filesize;
+    char header[1024];
+    if (strstr(buf, "GET / ") || strstr(buf, "GET /index.htm ")) {
+        file = fopen(HTMFILE, "rb");
+        if (file != NULL) {
+            fseek(file, 0, SEEK_END);
+            filesize = ftell(file);
+            fseek(file, 0, SEEK_SET);
+            filebuffer = (char*)malloc(filesize + 1);
+            fread(filebuffer, filesize, 1, file);
+            filebuffer[filesize] = NULL;
+            sprintf(header, "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: %ld\r\nConnection: close\r\n\r\n", filesize);
+            send(client_sock, header, strlen(header), 0);
+            send(client_sock, filebuffer, filesize, 0);
+            fclose(file);
+            free(filebuffer);
+        }
+        else {
+            char response[] = "HTTP/1.1 404 Not Found\r\nContent-Type: text/html\r\nConnection: close\r\n\r\n<html><body><h1>404 Not Found</h1></body></html>";
+            send(client_sock, response, strlen(response), 0);
+        }
+    }
+}
+
 int main() {
     WelcomeMessage();
     WSADATA wsa;
     if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
         return -1;
-
     listen_sock = socket(AF_INET, SOCK_STREAM, 0);
     if (listen_sock == INVALID_SOCKET) {
         printf("소켓 생성 실패, 에러코드: %d\n", WSAGetLastError());
