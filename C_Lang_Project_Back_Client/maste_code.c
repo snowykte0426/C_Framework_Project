@@ -21,27 +21,26 @@ void WelcomeMessage() {
 
 void QueryExamination(MYSQL* conn, char query[],MYSQL_RES* result) {
     if (mysql_query(conn, query)) {
-        fprintf(stderr, "Äõ¸® ½ÇÇà ½ÇÆĞ: %s\n--------------------------------------\n", mysql_error(conn));
+        fprintf(stderr, "ì¿¼ë¦¬ ì‹¤í–‰ ì‹¤íŒ¨: %s\n--------------------------------------\n", mysql_error(conn));
         return;
     }
 }
+
 void ListEntries(MYSQL* conn) {
     if (mysql_query(conn, "SELECT * FROM board.c_project")) {
-        fprintf(stderr, "Äõ¸® ½ÇÇà ½ÇÆĞ: %s\n--------------------------------------\n", mysql_error(conn));
+        fprintf(stderr, "ì¿¼ë¦¬ ì‹¤í–‰ ì‹¤íŒ¨: %s\n--------------------------------------\n", mysql_error(conn));
         return;
     }
-
     MYSQL_RES* result = mysql_store_result(conn);
     if (result == NULL) {
-        fprintf(stderr, "°á°ú ÀúÀå ½ÇÆĞ: %s\n--------------------------------------\n", mysql_error(conn));
+        fprintf(stderr, "ê²°ê³¼ ì €ì¥ ì‹¤íŒ¨: %s\n--------------------------------------\n", mysql_error(conn));
         return;
     }
-
-    printf("µî·ÏµÈ Ç×¸ñ ¸ñ·Ï\n--------------------------------------\n");
+    printf("ë“±ë¡ëœ í•­ëª© ëª©ë¡\n--------------------------------------\n");
     MYSQL_ROW row;
     while ((row = mysql_fetch_row(result))) {
         if (row[0] == NULL)
-            puts("µî·ÏµÈ Ç×¸ñÀÌ ¾ø½À´Ï´Ù!");
+            puts("ë“±ë¡ëœ í•­ëª©ì´ ì—†ìŠµë‹ˆë‹¤!");
         printf("%s - %s\n", row[0], row[1]);
     }
     mysql_free_result(result);
@@ -50,51 +49,53 @@ void ListEntries(MYSQL* conn) {
 
 void AddEntry(MYSQL* conn) {
     char content[255], title[50];
-    printf("°Ô½Ã±ÛÀÇ Á¦¸ñÀ» ÀÔ·ÂÇÏ¼¼¿ä: ");
+    printf("ê²Œì‹œê¸€ì˜ ì œëª©ì„ ì…ë ¥í•˜ì„¸ìš”: ");
     scanf(" %[^\n]", title);
     getchar();
-    printf("Ãß°¡ÇÒ Ç×¸ñ ³»¿ëÀ» ÀÔ·ÂÇÏ¼¼¿ä: ");
+    printf("ì¶”ê°€í•  í•­ëª© ë‚´ìš©ì„ ì…ë ¥í•˜ì„¸ìš”: ");
     scanf(" %[^\n]", content);
     char query[255];
     sprintf(query, "INSERT INTO board.c_project(title, contect) VALUES('%s', '%s')", title, content);
     if (mysql_query(conn, query)) {
-        fprintf(stderr, "Äõ¸® ½ÇÇà ½ÇÆĞ: %s\n--------------------------------------\n", mysql_error(conn));
+        fprintf(stderr, "ì¿¼ë¦¬ ì‹¤í–‰ ì‹¤íŒ¨: %s\n--------------------------------------\n", mysql_error(conn));
         return;
     }
-    printf("»õ Ç×¸ñÀÌ ¼º°øÀûÀ¸·Î Ãß°¡µÇ¾ú½À´Ï´Ù\n--------------------------------------\n");
+    printf("ìƒˆ í•­ëª©ì´ ì„±ê³µì ìœ¼ë¡œ ì¶”ê°€ë˜ì—ˆìŠµë‹ˆë‹¤\n--------------------------------------\n");
 }
 
 void ViewEntry(MYSQL* conn) {
-    printf("¿­¶÷ÇÒ °Ô½Ã±ÛÀÇ idÀ» ÀÔ·ÂÇÏ¼¼¿ä: ");
+    printf("ì—´ëŒí•  ê²Œì‹œê¸€ì˜ idì„ ì…ë ¥í•˜ì„¸ìš”: ");
     char id[100];
     scanf("%s", id);
     puts("--------------------------------------");
     char query[255];
     sprintf(query, "SELECT id,title,contect FROM board.c_project WHERE id = '%s'",id);
     if (mysql_query(conn, query)) {
-        fprintf(stderr, "Äõ¸® ½ÇÇà ½ÇÆĞ: %s\n--------------------------------------\n", mysql_error(conn));
+        fprintf(stderr, "ì¿¼ë¦¬ ì‹¤í–‰ ì‹¤íŒ¨: %s\n--------------------------------------\n", mysql_error(conn));
         return;
     }
     MYSQL_RES* result = mysql_store_result(conn);
     MYSQL_ROW row;
     row = mysql_fetch_row(result);
-    printf("±Û ¹øÈ£: %s\nÁ¦¸ñ: %s\n±Û ³»¿ë: %s\n", row[0], row[1], row[2]);
+    printf("ê¸€ ë²ˆí˜¸: %s\nì œëª©: %s\nê¸€ ë‚´ìš©: %s\n", row[0], row[1], row[2]);
     mysql_free_result(result);
     puts("--------------------------------------");
 }
+
 void DB_Output(MYSQL_RES* result,MYSQL_ROW row) {
     while ((row = mysql_fetch_row(result))) {
         if (row[0] == NULL)
-            puts("µî·ÏµÈ Ç×¸ñÀÌ ¾ø½À´Ï´Ù!");
+            puts("ë“±ë¡ëœ í•­ëª©ì´ ì—†ìŠµë‹ˆë‹¤!");
         printf("%s - %s\n", row[0], row[1]);
     }
     mysql_free_result(result);
 }
+
 void SearchEntry(MYSQL* conn) {
-    printf("°Ë»ö¾î¸¦ ÀÔ·ÂÇØÁÖ¼¼¿ä: ");
+    printf("ê²€ìƒ‰ì–´ë¥¼ ì…ë ¥í•´ì£¼ì„¸ìš”: ");
     char keyword[100];
     scanf("%s", keyword);
-    printf("°Ë»ö¾î¿¡ ÇØ´çÇÏ´Â ³»¿ëÀÌ ÀÖ´Â °Ô½Ã±Û\n--------------------------------------");
+    printf("ê²€ìƒ‰ì–´ì— í•´ë‹¹í•˜ëŠ” ë‚´ìš©ì´ ìˆëŠ” ê²Œì‹œê¸€\n--------------------------------------");
     char query[255];
     MYSQL_ROW row={0,};
     sprintf(query, "SELECT * FROM board.c_project WHERE contect LIKE '%%%s%%'", keyword);
@@ -115,16 +116,15 @@ void SearchEntry(MYSQL* conn) {
 
 void DeleteEntry(MYSQL* conn) {
     int id;
-    printf("»èÁ¦ÇÒ Ç×¸ñÀÇ ID¸¦ ÀÔ·ÂÇÏ¼¼¿ä: ");
+    printf("ì‚­ì œí•  í•­ëª©ì˜ IDë¥¼ ì…ë ¥í•˜ì„¸ìš”: ");
     scanf("%d", &id);
-
     char query[255];
     sprintf(query, "DELETE FROM board.c_project WHERE id = %d", id);
     if (mysql_query(conn, query)) {
-        fprintf(stderr, "Äõ¸® ½ÇÇà ½ÇÆĞ: %s\n--------------------------------------\n", mysql_error(conn));
+        fprintf(stderr, "ì¿¼ë¦¬ ì‹¤í–‰ ì‹¤íŒ¨: %s\n--------------------------------------\n", mysql_error(conn));
         return;
     }
-    printf("Ç×¸ñÀÌ ¼º°øÀûÀ¸·Î »èÁ¦µÇ¾ú½À´Ï´Ù\n--------------------------------------");
+    printf("í•­ëª©ì´ ì„±ê³µì ìœ¼ë¡œ ì‚­ì œë˜ì—ˆìŠµë‹ˆë‹¤\n--------------------------------------");
 }
 
 int master_code() {
@@ -132,16 +132,16 @@ int master_code() {
     MYSQL mysql;
     mysql_init(&mysql); 
     if (!mysql_real_connect(&mysql, "localhost", "root", "123456", "board", 0, NULL, 0)) {
-        fprintf(stderr, "MySQL ¿¬°á ½ÇÆĞ: %s\n", mysql_error(&mysql));
+        fprintf(stderr, "MySQL ì—°ê²° ì‹¤íŒ¨: %s\n", mysql_error(&mysql));
         return 1;
     }
     else {
-        printf("DB¿¡ ¿¬°áµÇ¾ú½À´Ï´Ù.\n");
+        printf("DBì— ì—°ê²°ë˜ì—ˆìŠµë‹ˆë‹¤.\n");
     }
     puts("--------------------------------------");
     char command[10];
     while (1) {
-        printf("¸í·É¾î¸¦ ÀÔ·ÂÇÏ¼¼¿ä (list, view, search, add, delete, exit): ");
+        printf("ëª…ë ¹ì–´ë¥¼ ì…ë ¥í•˜ì„¸ìš” (list, view, search, add, delete, exit): ");
         scanf("%s", command);
 
         if (strcmp(command, "list") == 0) {
@@ -163,10 +163,9 @@ int master_code() {
             ViewEntry(&mysql);
         }
         else {
-            printf("Àß¸øµÈ ¸í·É¾îÀÔ´Ï´Ù.\n");
+            printf("ì˜ëª»ëœ ëª…ë ¹ì–´ì…ë‹ˆë‹¤.\n");
         }
     }
-
     mysql_close(&mysql);
     return 0;
 }
